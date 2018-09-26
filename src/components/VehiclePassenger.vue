@@ -1,18 +1,24 @@
 <template>
-    <div>
-        <label>
-            Rucksack
-            <input v-model="backpackName"/>
-        </label>
-    </div>
+    <ObjectAutocomplete
+        class="mb-2"
+        label="Rucksack"
+        v-model="backpackName"
+        :values="backpacks"
+    />
 </template>
 <script>
 import _ from 'lodash';
 
 import { backpackRepo } from '../js/objectRepositories';
+import { backpackStats } from '../js/objectStats';
+
+import ObjectAutocomplete from './ObjectAutocomplete'
 
 export default {
     name: 'VehiclePassenger',
+    components: {
+        ObjectAutocomplete,
+    },
     props: {
         value: {
             type: Object,
@@ -22,6 +28,9 @@ export default {
     data: () => ({
         backpackName: '',
     }),
+    computed: {
+        backpacks: () => backpackStats,
+    },
     watch: {
         backpackName(value) {
             if (backpackRepo.exists(value)) {

@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export default class Backpack {
 
     constructor(stats) {
@@ -5,6 +7,6 @@ export default class Backpack {
     }
 
     getVolume() {
-        return this.stats.volume;
+        return _.get(this, 'stats.volume', 0);
     }
 }

@@ -1,25 +1,55 @@
-import { itemRepo, vehicleRepo } from './objectRepositories';
+import _ from 'lodash';
+import { itemRepo } from './objectRepositories';
+import Vehicle from './vehicle';
+import Item from './item'; 
 
+/**
+ * Represents a farm tour.
+ */
 export default class Tour {
 
-    constructor(itemName) {
-        this.item = itemRepo.instantiate(itemName);
+    constructor() {
+        this.item = new Item();
         this.vehicles = [];
     }
 
-    calculateYield() {
-        return Math.floor(this.getTotalVolume() / this.item.getVolume()) * this.item.getValue();
+    /**
+     * Adds a vehicle to the tour.
+     */
+    addEmptyVehicle() {
+        this.vehicles.push(new Vehicle());
     }
 
-    addVehicle(vehicleName) {
-        const vehicle = vehicleRepo.instantiate(vehicleName);
-        this.vehicles.push(vehicle);
-        return vehicle;
+    /**
+     * Sets the item for the tour.
+     * @param {string} itemName 
+     */
+    setItem(itemName) {
+        this.item = itemRepo.instantiate(itemName);
     }
 
+    /**
+     * 
+     */
+    getItem() {
+        return _.get(this, 'item', new Item());
+    }
+
+    getVehicles() {
+        return _.filter(this.vehicles, e => !_.isNull(e));
+    }
+
+    /**
+     * Returns the total volume for every vehicle
+     * and passenger.
+     * @returns {number}
+     */
     getTotalVolume() {
-        let totalVolume = 0;
-        this.vehicles.forEach(vehicle => { totalVolume += vehicle.getTotalVolume(); });
-        return totalVolume;
+        return _.sumBy(this.getVehicles(), e => e.getTotalVolume());
+    }
+
+    getYield() {
+        const item = this.getItem();
+        return Math.floor(this.getTotalVolume() / item.getVolume()) * item.getValue();
     }
 }

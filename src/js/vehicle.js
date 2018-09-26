@@ -1,3 +1,5 @@
+import VehiclePassenger from './vehiclePassenger';
+
 /**
  * Represents a vehicle within the game.
  */
@@ -10,42 +12,49 @@ export default class Vehicle {
 
     /**
      * Adds a passenger to the vehicle.
-     * @param {VehiclePassenger} passenger 
      */
-    addPassenger(passenger) {
-        if (!this.canTakePassengers()) {
-            return;
-        }
-
-        this.passengers.push(passenger);
+    addEmptyPassenger() {
+        this.passengers.push(new VehiclePassenger());
     }
 
     /**
      * Returns the name of this vehicle.
      */
     getName() {
-        return this.stats.name;
+        return _.get(this, 'stats.name', 'empty');
     }
 
     /**
      * Returns the vehicle's volume.
      */
     getVolume() {
-        return this.stats.volume;
+        return _.get(this, 'stats.volume', 0);
     }
 
     /**
      * Returns the vehicle's value.
      */
     getValue() {
-        return this.stats.value;
+        return _.get(this, 'stats.value', 0);
     }
 
     /**
      * Returns the vehicle's seats.
      */
     getSeats() {
-        return this.stats.seats;
+        return _.get(this, 'stats.seats', 0);
+    }
+
+    getPassengers() {
+        return _.filter(this.passengers, e => !_.isNull(e));
+    }
+
+    /**
+     * Returns whether or not this vehicle jas
+     * passengers.
+     */
+    hasPassengers() {
+        return this.passengers.length !== 0;
     }
 
     /**
@@ -53,7 +62,7 @@ export default class Vehicle {
      * any more passengers.
      */
     canTakePassengers() {
-        return this.stats.seats > this.passengers.length;
+        return this.getSeats() > this.passengers.length;
     }
 
     /**
@@ -61,8 +70,6 @@ export default class Vehicle {
      * all passengers inside.
      */
     getTotalVolume() {
-        let totalVolume = this.getVolume();
-        this.passengers.forEach(passenger => { totalVolume += passenger.getBackpack().getVolume() });
-        return totalVolume;
+        return this.getVolume() + _.sumBy(this.getPassengers(), e => e.getBackpackVolume());
     }
 }

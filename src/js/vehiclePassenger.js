@@ -1,26 +1,29 @@
-import { backpackRepo } from './objectRepositories';
+import _ from 'lodash';
+import Backpack from './backpack';
 
 export default class VehiclePassenger {
 
     constructor() {
         this.backpack = null;
     }
-    
+
     /**
      * Sets the backpack for this passenger.
-     * @param {string} backpackName
-     * @returns {VehiclePassenger}
+     * @param {Backpack} backpack 
      */
-    withBackpack(backpackName) {
-        this.backpack = backpackRepo.instantiate(backpackName);
-        return this;
+    setBackpack(backpack) {
+        this.backpack = backpack;
     }
-
+    
     /**
      * Returns the backpack for this passenger.
      * @returns {Backpack}
      */
     getBackpack() {
-        return this.backpack;
+        return _.get(this, 'backpack', new Backpack());
+    }
+
+    getBackpackVolume() {
+        return _.get(this, 'backpack.stats.volume', 0);
     }
 }

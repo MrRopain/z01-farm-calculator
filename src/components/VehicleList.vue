@@ -1,41 +1,62 @@
 <template>
     <div>
-        <VehicleUi
-            v-for="(vehicle, index) in vehicles" :key="index"
-            v-model="vehicles[index]"
+        <ObjectAutocomplete
+            class="mb-2"
+            label="Rohstoff"
+            v-model="resourceName"
+            :values="resources"
         />
-        <button @click="addVehicle()">Fahrzeug hinzufügen</button>
-        <!-- {{vehicles}} -->
+
+        <VehicleUi
+            v-for="(vehicle, index) in tour.vehicles" :key="index"
+            v-model="tour.vehicles[index]"
+        />
+
+        <!-- <button @click="tour.addEmptyVehicle()">
+            Fahrzeug hinzufügen
+        </button> -->
+
+        <hr>
+
+        {{tour.getYield().toLocaleString('de-DE')}}€
+        <el-button
+            class="float-right"
+            @click="tour.addEmptyVehicle()"
+        >
+            <i class="fa fa-truck mr-2"/>
+            Hinzufügen
+        </el-button>
+
+        <!-- <pre v-text="tour.vehicles" /> -->
     </div>
 </template>
 <script>
 import Tour from '../js/tour';
+import { itemStats } from '../js/objectStats';
+
+import Input from './Input';
+import ObjectAutocomplete from './ObjectAutocomplete';
 import VehicleUi from './Vehicle';
 
 export default {
     name: 'VehicleList',
     components: {
+        Input,
+        ObjectAutocomplete,
         VehicleUi,
     },
-    data: () => ({
-        vehicleCount: 1,
-        vehicles: [],
-        tourYield: 0,
-    }),
-    watch: {
-        vehicles: {
-            deep: true,
-            handler(value) {
-                const tour = new Tour('Cannabis');
-                tour.vehicles = value;
-                this.tourYield = tour.calculateYield();
-            }
-        }
+    data() {
+        return {
+            tour: new Tour(),
+            resourceName: '',
+        };
     },
-    methods: {
-
-        addVehicle() {
-            this.vehicles.push(null);
+    computed: {
+        resources: () => itemStats
+    },
+    watch: {
+        resourceName(value) {
+            this.tour.setItem(value);
         }
     }
 }

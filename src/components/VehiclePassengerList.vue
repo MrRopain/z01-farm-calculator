@@ -1,14 +1,10 @@
 <template>
-    <div>
+    <div v-if="vehicle !== null">
+        <h5 v-if="vehicle.hasPassengers()" class="font-weight-light">Passagiere</h5>
         <VehiclePassengerUi
-            v-for="(passenger, index) in passengers" :key="index"
-            v-model="passengers[index]"
+            v-for="(passenger, index) in vehicle.passengers" :key="index"
+            v-model="vehicle.passengers[index]"
         />
-        <button
-            v-if="vehicle.canTakePassengers()"
-            @click="addPassenger()"
-        >Passagier hinzufügen</button>
-        {{passengers}}
     </div>
 </template>
 <script>
@@ -24,21 +20,6 @@ export default {
         vehicle: {
             type: Object,
             default: {},
-        }
-    },
-    data: () => ({
-        passengerCount: 1,
-        passengers: [],
-    }),
-    watch: {
-        passengers(value) {
-            this.vehicle.passengers = value;
-        }
-    },
-    methods: {
-
-        addPassenger() {
-            this.passengers.push(new VehiclePassenger());
         }
     }
 }

@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export default class Item {
 
     constructor(stats) {
@@ -5,14 +7,14 @@ export default class Item {
     }
 
     getName() {
-        return this.stats.name;
+        return _.get(this, 'stats.name', 'empty');
     }
 
     getVolume() {
-        return this.stats.volume;
+        return _.get(this, 'stats.volume', 0);
     }
 
     getValue() {
-        return this.stats.value;
+        return _.get(this, 'stats.value', 0);
     }
 }
